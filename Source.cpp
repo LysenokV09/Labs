@@ -1,206 +1,110 @@
 #include <iostream>
-#include <stdio.h>
+#include <list>
+#include <fstream>
+#include <windows.h>
+#include <math.h>
 #include <string>
-#include<fstream>
 using namespace std;
-struct Peop {
+struct Peop
+{
     string fio;
-    string ad;
-    int np;
+    string bday;
+    string ph;
+    string np;
 };
-int* a;
-void INFILE(Peop b[], const int size)
+int Hash_task(string s, int n)
 {
-    ifstream file("MyFile.txt");
-    if (file) {
-        for (int i = 0; i < size; i++) 
-        {
-            getline(file, b[i].fio);
-            getline(file, b[i].ad);
-            file>> b[i].np;
-            file.ignore();
-        }
-    }
-}
-void Vvod(Peop b[], const int size) {
-    for (int i = 0; i < size; i++) {
-        cout << "Введите ФИО: " << endl;
-        getline(cin, b[i].fio);
-        cout << "Введите адресс: " << endl;
-        getline( cin, b[i].ad);
-        cout << "Введите номер паспорта: " << endl;
-        cin >> b[i].np;
-        cin.ignore();
-    }
-};
-void vivod(Peop b[], const int size) {
-    for (int i = 0; i < size; i++) {
-        cout << endl;
-        cout << "ФИО : " << b[i].fio << endl;
-        cout << "Адресс: " << b[i].ad << endl;
-        cout << "Номер паспорта: " << b[i].np << endl;
-    }
-};
-int BMF(string st, string ct)
-{
-    int stl, ctl;
-    stl = st.size();
-    ctl = ct.size();
-    if (stl != 0 && ctl != 0 && stl >= ctl)
+    int x = 0;
+    for (int i = 0; i < s.size(); i++)
     {
-        int i, p;
-        int b[256];
-        for (i = 0; i < 256; i++)
-        {
-            b[i] = ctl;
-        }
-        for (i = ctl - 2; i >= 0; i--)
-        {
-            if (b[int(unsigned char(ct[i]))] == ctl)
-            {
-                b[int(unsigned char(ct[i]))] = ctl - i - 1;
-            }
-        }
-        p = ctl - 1;
-        while (p < stl)
-        {
-            if (ct[ctl - 1] != st[p])
-            {
-                p += b[int((unsigned char)st[p])];
-            }
-            else
-            {
-                for (i = ctl - 1; i >= 0; i--)
-                {
-                    if (ct[i] != st[p - ctl + i + 1])
-                    {
-                        p += b[int((unsigned char)st[p])];
-                        break;
-                    }
-                    else if (i == 0)
-                    {
-                        return p - ctl + 1;
-                    }
-                }
-            }
-        }
+        x += (int)(s[i]) * (i + 1);
     }
-    return -1;
-}
-int SPryanik(string str, string obr)
-{
-    {
-        int pi[50];
-        pi[0] = 0;
-
-
-        int l;
-
-        for (l = 1; obr[l]; ++l)
-        {
-            int j = pi[l - 1];
-            while ((j > 0) && (obr[l] != obr[j]))
-                j = pi[j - 1];
-            if (obr[l] == obr[j])
-                ++j;
-            pi[l] = j;
-        }
-        int j = 0;
-
-        for (int i = 0; str[i]; ++i)
-        {
-            while ((j > 0) && (str[i] != obr[j]))
-                j = pi[j - 1];
-
-            if (str[i] == obr[j])
-                ++j;
-            if (j == l)
-
-                return 0;;
-        }
-        return -1;
-    }
-}
-void SLine(Peop b[], int size) {
-     int key2;
-        cout <<endl<< "Введите номер паспорта человека, которого вы ищите(Линейный поиск):  ";
-        cin >> key2;
-    for (int i = 0; i < size; i++) {
-        if (b[i].np == key2) {  
-            cout << "ФИО : " << b[i].fio << endl;
-            cout << "Адресс " << b[i].ad << endl;
-            cout << "Номер паспорта " << b[i].np << endl;
-        }
-    }
+    return (int)(n * (0.3 * x - (int)(0.3 * x)));
 }
 int main()
 {
-    system("chcp 1251>nul");
-    int* a;
-    int size = 0, m, key;
-    string substr, adres;
-    while (size <= 0 || size > 7)
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    int len = -1;
+    int adress;
+    Peop x;
+    string droh;
+    int error = 0;
+    while (len < 2 || len>100)
     {
-        cout << "Введите количество человек, не больше 7:" << endl;
-        cin >> size;
+        cout << "Введите размер таблицы\n";
+        cin >> len;
     }
-    a = (int*)malloc((size) * sizeof(int));//Выделение памяти под массив
-    Peop* b = new Peop[size];
-    cout << "Выберите деальнейшее действие" << endl;
-    cout << "1. Чтение из файла" << endl;
-    cout << "2. Заполнение ручками " << endl;
-    cin >> m;
-    while (m != 1 && m != 2)
+    const int N = len;
+    cin.get();
+    Peop* data_base = new Peop[len];
+    string* key = new string[len];
+    for (int i = 0; i < len; i++) key[i] = "404";
+    ifstream F1("Data.txt");
+    for (int i = 0; i < N; i++)
     {
-        cin >> m;
-    }
-    if (m == 1)
-    {
-        INFILE(b, size);
-    }
-    else
-    {
-        cin.ignore();
-        Vvod(b, size);
-    }
-    vivod(b, size);
-    SLine(b, size);
-    string keys;
-    cout << "Введите ключ, фамилию студента: ";
-    cin >> keys;
-    int i = 0;
-    bool y = true;
-    while (y) {
-        int r = SPryanik(b[i].fio, keys);
-        if (r != -1) {
-            cout << "Элемент найден!" << endl;
-            cout << "ФИО:\t" << b[i].fio << endl;
-            cout << "Адресс: \t" << b[i].ad << endl;
-            cout << "Номер паспорта:\t" << b[i].np << endl;
-            y = false;
-        }
-        else i++;
-        if (i == size)
+        getline(F1, x.fio);
+        getline(F1, x.bday);
+        getline(F1, x.ph);
+        getline(F1, x.np);
+        adress = Hash_task(x.bday, N);
+        while (adress >= len || key[len - 1] != "404")
         {
-            y = false;
+            Peop* data_base_new = new Peop[len * 2];
+            string* key_new = new string[len * 2];
+            for (int i = 0; i < len; i++)
+            {
+                data_base_new[i] = data_base[i];
+                key_new[i] = key[i];
+            }
+            for (int i = len; i < len * 2; i++) key_new[i] = "404";
+            delete[] data_base;
+            delete[] key;
+            data_base = data_base_new;
+            key = key_new;
+            len *= 2;
         }
-    }
-    if (i == size) {
-        cout << "Элемент не найден.";
-    }
-
-    cout << endl;
-    cout << "Введите адрес человека, которого ищите: ";
-    cin >> adres;
-    for (int i = 0; i < size; i++) {
-
-        if (BMF(b[i].ad, adres) != -1)
+        if (key[adress] != "404")
         {
-            cout << "ФИО : " << b[i].fio << endl;
-            cout << "Адресс " << b[i].ad << endl;
-            cout << "Номер паспорта " << b[i].np << endl;
-        }
-    }
+            error++;
+            while (key[adress] != "404") adress++;
 
-    return 0;
+        }
+        data_base[adress] = x;
+        key[adress] = x.bday;
+        cout << "Вывод объектов\n";
+        cout << "ФИО            - " << data_base[adress].fio << endl;
+        cout << "Дата рождения  - " << data_base[adress].bday << endl;
+        cout << "Номер телефона - " << data_base[adress].ph << endl;
+        cout << "Номер паспорта - " << data_base[adress].np << endl;
+    }
+   /* cout << "Таблица создана. Коллизий: " << error << endl;*/
+    /*while (true)
+    {*/
+        cout << "Введите Дату рождения\n";
+        cin >> droh;
+       adress = Hash_task(droh, N);
+        while (adress < len)
+        {
+            if (key[adress] == droh)
+            {
+                cout << "Объект найден:\n";
+                cout << "ФИО            - " << data_base[adress].fio << endl;
+                cout << "Дата рождения  - " << data_base[adress].bday << endl;
+                cout << "Номер телефона - " << data_base[adress].ph << endl;
+                cout << "Номер паспорта - " << data_base[adress].np << endl;
+                break;
+            }
+            if (key[adress] == "404")
+            {
+                cout << "Неизвестный объект [404]\n";
+                break;
+            }
+            adress++;
+        }
+        if (adress == len)
+        {
+            cout << "Неизвестный объект [404]\n";
+        }
+    /*}*/
 }
