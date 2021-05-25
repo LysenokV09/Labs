@@ -24,11 +24,11 @@ void INFILE(Peop b[], const int size)
 }
 void Vvod(Peop b[], const int size) {
     for (int i = 0; i < size; i++) {
-        cout << "Введите ФИО: " << endl;
+        cout << "Введите ФИО студента:" << endl;
         getline(cin, b[i].fio);
-        cout << "Введите адресс: " << endl;
+        cout << "Введите адресс:" << endl;
         getline( cin, b[i].ad);
-        cout << "Введите номер паспорта: " << endl;
+        cout << "Введите номер паспорта" << endl;
         cin >> b[i].np;
         cin.ignore();
     }
@@ -41,87 +41,65 @@ void vivod(Peop b[], const int size) {
         cout << "Номер паспорта: " << b[i].np << endl;
     }
 };
-int BMF(string st, string ct)
-{
-    int stl, ctl;
-    stl = st.size();
-    ctl = ct.size();
-    if (stl != 0 && ctl != 0 && stl >= ctl)
-    {
-        int i, p;
-        int b[256];
-        for (i = 0; i < 256; i++)
-        {
-            b[i] = ctl;
-        }
-        for (i = ctl - 2; i >= 0; i--)
-        {
-            if (b[int(unsigned char(ct[i]))] == ctl)
-            {
-                b[int(unsigned char(ct[i]))] = ctl - i - 1;
-            }
-        }
-        p = ctl - 1;
-        while (p < stl)
-        {
-            if (ct[ctl - 1] != st[p])
-            {
-                p += b[int((unsigned char)st[p])];
-            }
-            else
-            {
-                for (i = ctl - 1; i >= 0; i--)
-                {
-                    if (ct[i] != st[p - ctl + i + 1])
-                    {
-                        p += b[int((unsigned char)st[p])];
-                        break;
-                    }
-                    else if (i == 0)
-                    {
-                        return p - ctl + 1;
-                    }
+int search(Peop b[], string substr, const int size) {
+    int strl, substrl, res = -1;
+    substrl = substr.size();
+    for (int i = 0; i < size; i++) {
+        string str = b[i].ad;
+        strl = b[i].ad.size();
+        if (strl != 0 && substrl != 0) {
+            for (int j = 0; j < substrl; j++) {
+                if (substr[j] != str[j]) {
+                    break;
+                }
+                else if (j == substrl - 1) {
+                    res = i;
+                    break;
                 }
             }
         }
     }
-    return -1;
-}
-int SPryanik(string str, string obr)
-{
-    {
-        int pi[50];
-        pi[0] = 0;
-
-
-        int l;
-
-        for (l = 1; obr[l]; ++l)
-        {
-            int j = pi[l - 1];
-            while ((j > 0) && (obr[l] != obr[j]))
-                j = pi[j - 1];
-            if (obr[l] == obr[j])
-                ++j;
-            pi[l] = j;
-        }
-        int j = 0;
-
-        for (int i = 0; str[i]; ++i)
-        {
-            while ((j > 0) && (str[i] != obr[j]))
-                j = pi[j - 1];
-
-            if (str[i] == obr[j])
-                ++j;
-            if (j == l)
-
-                return 0;;
-        }
-        return -1;
+    if (res == -1) {
+        cout << "Такого студента нет" << endl;
     }
+    else {
+        cout << "ФИО: " << b[res].fio << endl;
+        cout << "Адресс: " << b[res].ad << endl;
+        cout << "Номер паспорта: " << b[res].np << endl;
+    }
+    return 0;
 }
-void SLine(Peop b[], int size) {
+int InterpolSearch(Peop b[], int* a, int size, int key) {
+    int mid, left = 0, right = size - 1;
+    int c = -2;
+    for (int y = 0; y < size; y++) {
+        a[y] = b[y].np;
+    }
+    bool f = true;
+    while (f == true)
+    {
+        f = false;
+        for (int re = size - 1; re >= 1; re--)
+        {
+            if (a[re - 1] > a[re])
+            {
+                int  o = a[re];
+                a[re] = a[re - 1];
+                a[re - 1] = o;
+                f = true;
+            }
+        }
+    }
+    while (a[left] <= key && a[right] >= key) {
+        mid = left + ((key - a[left]) * (right - left)) / (a[right] - a[left]);
+        if (a[mid] < key)  left = mid + 1;
+        else   if (a[mid] > key)  right = mid - 1;
+        else return mid;
+    }
+    if (a[left] == key)return left;
+    else return -1;
+}
+void LineSearch(Peop b[], int size) {
      int key2;
         cout <<endl<< "Введите номер паспорта человека, которого вы ищите(Линейный поиск):  ";
         cin >> key2;
@@ -138,15 +116,15 @@ int main()
     system("chcp 1251>nul");
     int* a;
     int size = 0, m, key;
-    string substr, adres;
-    while (size <= 0 || size > 7)
+    string substr;
+    while (size <= 0||size>7)
     {
         cout << "Введите количество человек, не больше 7:" << endl;
         cin >> size;
     }
     a = (int*)malloc((size) * sizeof(int));//Выделение памяти под массив
     Peop* b = new Peop[size];
-    cout << "Выберите деальнейшее действие" << endl;
+    cout << "Deustv" << endl;
     cout << "1. Чтение из файла" << endl;
     cout << "2. Заполнение ручками " << endl;
     cin >> m;
@@ -161,46 +139,33 @@ int main()
     else
     {
         cin.ignore();
-        Vvod(b, size);
+       Vvod(b, size);
     }
-    vivod(b, size);
-    SLine(b, size);
-    string keys;
-    cout << "Введите ключ, фамилию студента: ";
-    cin >> keys;
-    int i = 0;
-    bool y = true;
-    while (y) {
-        int r = SPryanik(b[i].fio, keys);
-        if (r != -1) {
-            cout << "Элемент найден!" << endl;
-            cout << "ФИО:\t" << b[i].fio << endl;
-            cout << "Адресс: \t" << b[i].ad << endl;
-            cout << "Номер паспорта:\t" << b[i].np << endl;
-            y = false;
-        }
-        else i++;
-        if (i == size)
+       vivod(b, size);
+       LineSearch(b, size);
+       cout <<endl<< "Введите адрес человека, которого вы ищите" << endl;
+       cin>>substr;
+       search(b, substr, size);
+            cout << "Введите номер паспорта человека, которого вы ищите(Интерполяционный поиск):" << endl;
+            cin >> key;
+       
+        cin.ignore();
+        
+      if (InterpolSearch(b, a, size, key) == -1)
         {
-            y = false;
+            cout << "Элемент не найден" << endl;
         }
-    }
-    if (i == size) {
-        cout << "Элемент не найден.";
-    }
-
-    cout << endl;
-    cout << "Введите адрес человека, которого ищите: ";
-    cin >> adres;
-    for (int i = 0; i < size; i++) {
-
-        if (BMF(b[i].ad, adres) != -1)
-        {
-            cout << "ФИО : " << b[i].fio << endl;
-            cout << "Адресс " << b[i].ad << endl;
-            cout << "Номер паспорта " << b[i].np << endl;
+        else {
+            for (int i = 0; i < size; i++)
+            {
+                if (b[i].np == a[InterpolSearch(b, a, size, key)])
+                {
+                    cout << "ФИО: " << b[i].fio << endl;
+                    cout << " Адресс: " << b[i].ad << endl;
+                    cout << "Номер паспорта: " << b[i].np << endl;
+                }
+            }
         }
-    }
-
+        
     return 0;
 }
